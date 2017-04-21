@@ -1,0 +1,18 @@
+version: 0.1
+
+environment_variables:
+  plaintext:
+    NODE_ENV: "development"
+phases:
+  install:
+    commands:
+      - npm install -g grunt
+  pre_build:
+    commands:
+      - npm install
+  build:
+    commands:
+      - grunt
+  post_build:
+    commands:
+      - echo Build completed [`date`]
