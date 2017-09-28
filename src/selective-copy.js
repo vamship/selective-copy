@@ -13,6 +13,33 @@ function _identityTransform(propName, value) {
 }
 
 /**
+ * Extracts property names from the specified object. Returns an array
+ * containing property names, with nested properties shown as "."
+ * separated strings.
+ *
+ * @private
+ * @param {Object} src The source object from which to extract properties
+ * @param {String} [prefix=''] An optional prefix that will be prepended to the
+ *        property names
+ *
+ * @return {Array} An array of property names.
+ */
+function _extractPropertyNames(src, prefix) {
+    let keys = [];
+    for (let propertyName in src) {
+        if (src.hasOwnProperty(propertyName)) {
+            const value = src[propertyName];
+            if (value && typeof value === 'object') {
+                keys = keys.concat(_extractPropertyNames(value, `${prefix}${propertyName}.`));
+            } else {
+                keys.push(`${prefix}${propertyName}`);
+            }
+        }
+    }
+    return keys;
+}
+
+/**
  * Allows selective deep copying of attributes from object to another
  */
 class SelectiveCopy {
@@ -31,6 +58,23 @@ class SelectiveCopy {
             properties = [];
         }
         this._properties = properties.map(item => item);
+    }
+
+    /**
+     * Extracts property names from the specified object. Returns an array
+     * containing property names, with nested properties shown as "."
+     * separated strings.
+     *
+     * @static
+     * @param {Object} src The source object from which to extract properties
+     *
+     * @return {Array} An array of property names.
+     */
+    static extractPropertyNames(src) {
+        if (!src || (src instanceof Array) || typeof src !== 'object') {
+            throw new Error('Invalid object specified (arg #1)');
+        }
+        return _extractPropertyNames(src, '');
     }
 
     /**

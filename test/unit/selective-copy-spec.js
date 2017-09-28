@@ -22,6 +22,142 @@ describe('SelectiveCopy', () => {
         SelectiveCopy = require('../../src/selective-copy');
     });
 
+    describe('[Static Methods]', () => {
+        it('should return a class with expected static methods', () => {
+            expect(SelectiveCopy).to.be.a('function');
+            expect(SelectiveCopy.extractPropertyNames).to.be.a('function');
+        });
+    });
+
+    describe('[STATIC] extractPropertyNames()', () => {
+        it('should throw an error if invoked without a valid object', () => {
+            const error = 'Invalid object specified (arg #1)';
+            _testValueProvider.allButObject().forEach((obj) => {
+                const wrapper = () => {
+                    return SelectiveCopy.extractPropertyNames(obj);
+                };
+                expect(wrapper).to.throw(error);
+            });
+        });
+
+        it('should return an array when invoked with a valid object', () => {
+            const ret = SelectiveCopy.extractPropertyNames({
+                foo: 'bar'
+            });
+            expect(ret).to.be.an('array');
+        });
+
+        it('should return an empty array if the input object is empty', () => {
+            const ret = SelectiveCopy.extractPropertyNames({});
+
+            expect(ret).to.be.an('array').and.to.be.empty;
+        });
+
+        it('should return a simple list of property names for non nested objects', () => {
+            const src = {
+                foo: 'bar',
+                abc: 123,
+                baz: () => {
+                },
+                isOk: true
+            };
+            const ret = SelectiveCopy.extractPropertyNames(src);
+
+            expect(ret).to.deep.equal(Object.keys(src));
+        });
+
+        it('should recursively process nested objects, returning "." separated property names where necessary', () => {
+            const src = {
+                foo: 'bar',
+                abc: 123,
+                baz: () => {
+                },
+                isOk: true,
+                nest: {
+                    another: 'prop',
+                    secondNest: {
+                        thisProp: 'is deeper',
+                        count: 20
+                    }
+                }
+            };
+            const ret = SelectiveCopy.extractPropertyNames(src);
+
+            expect(ret).to.deep.equal([
+                'foo', 'abc', 'baz', 'isOk', 'nest.another',
+                'nest.secondNest.thisProp', 'nest.secondNest.count'
+            ]);
+        });
+
+        it('should recursively process nested arrays, using the array index as the property name', () => {
+            const src = {
+                foo: 'bar',
+                abc: 123,
+                baz: () => {
+                },
+                isOk: true,
+                nest: {
+                    another: 'prop',
+                    secondNest: {
+                        thisProp: 'is deeper',
+                        count: 20
+                    },
+                    items: ['test', 123, false, null, undefined, {
+                        arrayProp: 'foo',
+                        yetAnother: 'bar',
+                        nestedArray: [1, 2, 3]
+                    }, [5, 6, 7]]
+                }
+            };
+            const ret = SelectiveCopy.extractPropertyNames(src);
+
+            expect(ret).to.deep.equal([
+                'foo', 'abc', 'baz', 'isOk', 'nest.another',
+                'nest.secondNest.thisProp', 'nest.secondNest.count',
+                'nest.items.0',
+                'nest.items.1',
+                'nest.items.2',
+                'nest.items.3',
+                'nest.items.4',
+                'nest.items.5.arrayProp',
+                'nest.items.5.yetAnother',
+                'nest.items.5.nestedArray.0',
+                'nest.items.5.nestedArray.1',
+                'nest.items.5.nestedArray.2',
+                'nest.items.6.0',
+                'nest.items.6.1',
+                'nest.items.6.2'
+            ]);
+        });
+
+        it('should only consider own properties, ignoring inherited props', () => {
+            const Parent = {
+                foo: 'bar',
+                abc: '123'
+            };
+            function Child() {
+                this.baz = () => {
+                };
+                this.isOk = true;
+                this.nest = {
+                    another: 'prop',
+                    secondNest: {
+                        thisProp: 'is deeper',
+                        count: 20
+                    }
+                };
+            }
+            Child.prototype = Parent;
+            const src = new Child();
+            const ret = SelectiveCopy.extractPropertyNames(src);
+
+            expect(ret).to.deep.equal([
+                'baz', 'isOk', 'nest.another',
+                'nest.secondNest.thisProp', 'nest.secondNest.count'
+            ]);
+        });
+    });
+
     describe('ctor()', () => {
         it('should return an object with expected methods and properties when invoked', () => {
             const instance = new SelectiveCopy();
