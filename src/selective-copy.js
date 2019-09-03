@@ -27,7 +27,7 @@ function _identityTransform(propName, value) {
 function _extractPropertyNames(src, prefix) {
     let keys = [];
     for (let propertyName in src) {
-        if (src.hasOwnProperty(propertyName)) {
+        if (Object.prototype.hasOwnProperty.call(src, propertyName)) {
             const value = src[propertyName];
             if (value && typeof value === 'object') {
                 keys = keys.concat(_extractPropertyNames(value, `${prefix}${propertyName}.`));
