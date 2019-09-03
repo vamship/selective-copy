@@ -26,7 +26,6 @@
     "mocha": "^6.2.0",
     "sinon": "^7.4.2",
     "sinon-chai": "^3.3.0",
-    "time-grunt": "^2.0.0",
     "wysknd-lib": "0.0.2",
     "wysknd-test": "^4.0.1"
   },
