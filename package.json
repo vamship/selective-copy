@@ -23,7 +23,7 @@
     "grunt-mocha-istanbul": "^5.0.2",
     "istanbul": "^0.4.5",
     "load-grunt-tasks": "^5.1.0",
-    "mocha": "^6.2.0",
+    "mocha": "^10.2.0",
     "sinon": "^7.4.2",
     "sinon-chai": "^3.3.0",
     "wysknd-lib": "0.0.2",
