@@ -8,6 +8,7 @@ logs
 
 # Coverage directory used by tools like istanbul
 coverage
+.nyc_output
 
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
@@ -15,8 +16,21 @@ coverage
 # Temporary files.
 .tmp/
 
+# Development tool configuration files
+.eslintrc.json
+.prettierrc
+.projections.json
+
 # Working directory
 working/
 
 # Distribution directory
 dist/
+
+# Documentation and test (not required for publishing)
+docs/
+test/
+
+# README and Gruntfile (not required for publishing)
+README.md
+Gruntfile.js
