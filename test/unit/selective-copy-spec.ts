@@ -220,4 +220,31 @@ describe("SelectiveCopy", () => {
       ]);
     });
   });
+
+  describe("ctor()", async function () {
+    it("should return an object with expected methods and properties when invoked", async function () {
+      const { testTarget: TargetClass } = await _import();
+      const instance = new TargetClass();
+
+      expect(instance).to.be.an("object");
+      expect(instance.copy).to.be.a("function");
+    });
+
+    it("should make a copy of the properties passed via the constructor", async function () {
+      const props = ["foo", "bar", "foo.bar", "foo.baz.0.chaz"];
+      const { testTarget: TargetClass } = await _import();
+      const instance = new TargetClass(props);
+
+      expect(instance._properties).to.deep.equals(props);
+      expect(instance._properties).to.not.equal(props);
+    });
+
+    _testValues.allButArray().forEach((props: any) => {
+      it(`should ignore all non array arguments, and initialize properties with an empty array (props=${props})`, async function () {
+        const { testTarget: TargetClass } = await _import();
+        const instance = new TargetClass(props);
+        expect(instance._properties).to.be.an("array").and.to.be.empty;
+      });
+    });
+  });
 });

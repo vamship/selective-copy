@@ -48,7 +48,7 @@ function _extractPropertyNames(
  * Allows selective deep copying of attributes from object to another
  */
 export class SelectiveCopy {
-  private _properties: string[];
+  _properties: string[];
 
   /**
    * @param {Array} [properties=[]] An optional list of property names that
@@ -61,7 +61,7 @@ export class SelectiveCopy {
    *        array.
    */
   constructor(properties: string[] = []) {
-    this._properties = properties.map((item) => item);
+    this._properties = Array.isArray(properties) ? [...properties] : [];
   }
 
   /**
